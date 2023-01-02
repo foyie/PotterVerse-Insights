@@ -1,0 +1,204 @@
+<html>
+<head>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vis-network@latest/styles/vis-network.css" type="text/css" />
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vis-network@latest/dist/vis-network.min.js"> </script>
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+
+<style type="text/css">
+
+        #mynetwork {
+            width: 1000px;
+            height: 1000px;
+            background-color: #222222;
+            border: 1px solid lightgray;
+            position: relative;
+            float: left;
+        }
+
+        
+        #loadingBar {
+            position:absolute;
+            top:0px;
+            left:0px;
+            width: 1000px;
+            height: 1000px;
+            background-color:rgba(200,200,200,0.8);
+            -webkit-transition: all 0.5s ease;
+            -moz-transition: all 0.5s ease;
+            -ms-transition: all 0.5s ease;
+            -o-transition: all 0.5s ease;
+            transition: all 0.5s ease;
+            opacity:1;
+        }
+
+        #bar {
+            position:absolute;
+            top:0px;
+            left:0px;
+            width:20px;
+            height:20px;
+            margin:auto auto auto auto;
+            border-radius:11px;
+            border:2px solid rgba(30,30,30,0.05);
+            background: rgb(0, 173, 246); /* Old browsers */
+            box-shadow: 2px 0px 4px rgba(0,0,0,0.4);
+        }
+
+        #border {
+            position:absolute;
+            top:10px;
+            left:10px;
+            width:500px;
+            height:23px;
+            margin:auto auto auto auto;
+            box-shadow: 0px 0px 4px rgba(0,0,0,0.2);
+            border-radius:10px;
+        }
+
+        #text {
+            position:absolute;
+            top:8px;
+            left:530px;
+            width:30px;
+            height:50px;
+            margin:auto auto auto auto;
+            font-size:22px;
+            color: #000000;
+        }
+
+        div.outerBorder {
+            position:relative;
+            top:400px;
+            width:600px;
+            height:44px;
+            margin:auto auto auto auto;
+            border:8px solid rgba(0,0,0,0.1);
+            background: rgb(252,252,252); /* Old browsers */
+            background: -moz-linear-gradient(top,  rgba(252,252,252,1) 0%, rgba(237,237,237,1) 100%); /* FF3.6+ */
+            background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(252,252,252,1)), color-stop(100%,rgba(237,237,237,1))); /* Chrome,Safari4+ */
+            background: -webkit-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* Chrome10+,Safari5.1+ */
+            background: -o-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* Opera 11.10+ */
+            background: -ms-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* IE10+ */
+            background: linear-gradient(to bottom,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* W3C */
+            filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcfcfc', endColorstr='#ededed',GradientType=0 ); /* IE6-9 */
+            border-radius:72px;
+            box-shadow: 0px 0px 10px rgba(0,0,0,0.2);
+        }
+        
+
+        
+
+        
+</style>
+
+</head>
+
+<body>
+<div id = "mynetwork"></div>
+
+<div id="loadingBar">
+    <div class="outerBorder">
+        <div id="text">0%</div>
+        <div id="border">
+            <div id="bar"></div>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+
+    // initialize global variables.
+    var edges;
+    var nodes;
+    var network; 
+    var container;
+    var options, data;
+
+    
+    // This method is responsible for drawing the graph, returns the drawn network
+    function drawGraph() {
+        var container = document.getElementById('mynetwork');
+        
+        
+
+        // parsing and collecting nodes and edges from the python
+        nodes = new vis.DataSet([{"font": {"color": "white"}, "group": 0, "id": "Dudley Dursley", "label": "Dudley Dursley", "shape": "dot", "size": 13}, {"font": {"color": "white"}, "group": 1, "id": "Harry Potter", "label": "Harry Potter", "shape": "dot", "size": 77}, {"font": {"color": "white"}, "group": 0, "id": "Jim McGuffin", "label": "Jim McGuffin", "shape": "dot", "size": 2}, {"font": {"color": "white"}, "group": 0, "id": "Petunia Dursley", "label": "Petunia Dursley", "shape": "dot", "size": 3}, {"font": {"color": "white"}, "group": 0, "id": "Vernon Dursley", "label": "Vernon Dursley", "shape": "dot", "size": 4}, {"font": {"color": "white"}, "group": 0, "id": "Yvonne", "label": "Yvonne", "shape": "dot", "size": 2}, {"font": {"color": "white"}, "group": 0, "id": "Piers Polkiss", "label": "Piers Polkiss", "shape": "dot", "size": 2}, {"font": {"color": "white"}, "group": 2, "id": "Dennis Bishop", "label": "Dennis Bishop", "shape": "dot", "size": 2}, {"font": {"color": "white"}, "group": 2, "id": "Gordon", "label": "Gordon", "shape": "dot", "size": 2}, {"font": {"color": "white"}, "group": 0, "id": "Smeltings school nurse", "label": "Smeltings school nurse", "shape": "dot", "size": 3}, {"font": {"color": "white"}, "group": 0, "id": "Hogwarts house-elves", "label": "Hogwarts house-elves", "shape": "dot", "size": 5}, {"font": {"color": "white"}, "group": 0, "id": "Hogwarts governors", "label": "Hogwarts governors", "shape": "dot", "size": 7}, {"font": {"color": "white"}, "group": 5, "id": "Ron Weasley", "label": "Ron Weasley", "shape": "dot", "size": 28}, {"font": {"color": "white"}, "group": 0, "id": "Draco Malfoy", "label": "Draco Malfoy", "shape": "dot", "size": 5}, {"font": {"color": "white"}, "group": 0, "id": "Ted", "label": "Ted", "shape": "dot", "size": 2}, {"font": {"color": "white"}, "group": 1, "id": "Albus Dumbledore", "label": "Albus Dumbledore", "shape": "dot", "size": 3}, {"font": {"color": "white"}, "group": 1, "id": "Dedalus Diggle", "label": "Dedalus Diggle", "shape": "dot", "size": 1}, {"font": {"color": "white"}, "group": 1, "id": "James Potter", "label": "James Potter", "shape": "dot", "size": 2}, {"font": {"color": "white"}, "group": 1, "id": "Albus Potter", "label": "Albus Potter", "shape": "dot", "size": 2}, {"font": {"color": "white"}, "group": 0, "id": "Vernon Dudley", "label": "Vernon Dudley", "shape": "dot", "size": 4}, {"font": {"color": "white"}, "group": 0, "id": "Snowy", "label": "Snowy", "shape": "dot", "size": 2}, {"font": {"color": "white"}, "group": 1, "id": "Uncle Bilius", "label": "Uncle Bilius", "shape": "dot", "size": 2}, {"font": {"color": "white"}, "group": 1, "id": "Uncle Nobby", "label": "Uncle Nobby", "shape": "dot", "size": 2}, {"font": {"color": "white"}, "group": 1, "id": "Rubeus Hagrid", "label": "Rubeus Hagrid", "shape": "dot", "size": 1}, {"font": {"color": "white"}, "group": 1, "id": "Minerva McGonagall", "label": "Minerva McGonagall", "shape": "dot", "size": 1}, {"font": {"color": "white"}, "group": 3, "id": "Lily Moon", "label": "Lily Moon", "shape": "dot", "size": 3}, {"font": {"color": "white"}, "group": 3, "id": "Lily Potter", "label": "Lily Potter", "shape": "dot", "size": 3}, {"font": {"color": "white"}, "group": 0, "id": "Cornelius Fudge", "label": "Cornelius Fudge", "shape": "dot", "size": 2}, {"font": {"color": "white"}, "group": 1, "id": "Adalbert Waffling", "label": "Adalbert Waffling", "shape": "dot", "size": 1}, {"font": {"color": "white"}, "group": 4, "id": "Tom Marvolo Riddle", "label": "Tom Marvolo Riddle", "shape": "dot", "size": 2}, {"font": {"color": "white"}, "group": 4, "id": "Tom Riddle Sr.", "label": "Tom Riddle Sr.", "shape": "dot", "size": 2}, {"font": {"color": "white"}, "group": 1, "id": "Doris Crockford", "label": "Doris Crockford", "shape": "dot", "size": 1}, {"font": {"color": "white"}, "group": 1, "id": "Griphook", "label": "Griphook", "shape": "dot", "size": 1}, {"font": {"color": "white"}, "group": 1, "id": "Madam Malkin", "label": "Madam Malkin", "shape": "dot", "size": 1}, {"font": {"color": "white"}, "group": 1, "id": "Muggle Prime Minister", "label": "Muggle Prime Minister", "shape": "dot", "size": 2}, {"font": {"color": "white"}, "group": 1, "id": "Muggle tramp", "label": "Muggle tramp", "shape": "dot", "size": 2}, {"font": {"color": "white"}, "group": 0, "id": "Hedwig", "label": "Hedwig", "shape": "dot", "size": 6}, {"font": {"color": "white"}, "group": 5, "id": "Ginny Weasley", "label": "Ginny Weasley", "shape": "dot", "size": 3}, {"font": {"color": "white"}, "group": 5, "id": "Percy Weasley", "label": "Percy Weasley", "shape": "dot", "size": 11}, {"font": {"color": "white"}, "group": 5, "id": "Neville Longbottom", "label": "Neville Longbottom", "shape": "dot", "size": 17}, {"font": {"color": "white"}, "group": 7, "id": "Lee Jordan", "label": "Lee Jordan", "shape": "dot", "size": 8}, {"font": {"color": "white"}, "group": 5, "id": "Fred Weasley", "label": "Fred Weasley", "shape": "dot", "size": 6}, {"font": {"color": "white"}, "group": 5, "id": "George Weasley", "label": "George Weasley", "shape": "dot", "size": 9}, {"font": {"color": "white"}, "group": 5, "id": "Bill Weasley", "label": "Bill Weasley", "shape": "dot", "size": 5}, {"font": {"color": "white"}, "group": 5, "id": "Dark Lord", "label": "Dark Lord", "shape": "dot", "size": 3}, {"font": {"color": "white"}, "group": 8, "id": "Hengist of Upper Barnton", "label": "Hengist of Upper Barnton", "shape": "dot", "size": 2}, {"font": {"color": "white"}, "group": 8, "id": "Cliodna", "label": "Cliodna", "shape": "dot", "size": 2}, {"font": {"color": "white"}, "group": 6, "id": "Hermione Granger", "label": "Hermione Granger", "shape": "dot", "size": 8}, {"font": {"color": "white"}, "group": 5, "id": "Goyle Sr.", "label": "Goyle Sr.", "shape": "dot", "size": 5}, {"font": {"color": "white"}, "group": 5, "id": "Sorting Hat", "label": "Sorting Hat", "shape": "dot", "size": 2}, {"font": {"color": "white"}, "group": 1, "id": "Hannah Abbott", "label": "Hannah Abbott", "shape": "dot", "size": 2}, {"font": {"color": "white"}, "group": 1, "id": "Hannah Cockleford", "label": "Hannah Cockleford", "shape": "dot", "size": 3}, {"font": {"color": "white"}, "group": 1, "id": "Susan Bones", "label": "Susan Bones", "shape": "dot", "size": 2}, {"font": {"color": "white"}, "group": 1, "id": "Justin Finch-Fletchley", "label": "Justin Finch-Fletchley", "shape": "dot", "size": 1}, {"font": {"color": "white"}, "group": 5, "id": "Seamus Finnigan", "label": "Seamus Finnigan", "shape": "dot", "size": 4}, {"font": {"color": "white"}, "group": 1, "id": "Nicholas Malfoy", "label": "Nicholas Malfoy", "shape": "dot", "size": 1}, {"font": {"color": "white"}, "group": 5, "id": "Great Auntie Enid", "label": "Great Auntie Enid", "shape": "dot", "size": 2}, {"font": {"color": "white"}, "group": 5, "id": "Madam Hooch", "label": "Madam Hooch", "shape": "dot", "size": 4}, {"font": {"color": "white"}, "group": 5, "id": "Peeves", "label": "Peeves", "shape": "dot", "size": 4}, {"font": {"color": "white"}, "group": 1, "id": "Emeric the Evil", "label": "Emeric the Evil", "shape": "dot", "size": 2}, {"font": {"color": "white"}, "group": 1, "id": "Uric the Oddball", "label": "Uric the Oddball", "shape": "dot", "size": 2}, {"font": {"color": "white"}, "group": 5, "id": "Fang", "label": "Fang", "shape": "dot", "size": 5}, {"font": {"color": "white"}, "group": 5, "id": "Charlie Baverstock", "label": "Charlie Baverstock", "shape": "dot", "size": 6}, {"font": {"color": "white"}, "group": 5, "id": "Charlie Weasley", "label": "Charlie Weasley", "shape": "dot", "size": 8}, {"font": {"color": "white"}, "group": 5, "id": "Parvati Patil", "label": "Parvati Patil", "shape": "dot", "size": 2}, {"font": {"color": "white"}, "group": 5, "id": "Oliver Wood", "label": "Oliver Wood", "shape": "dot", "size": 5}, {"font": {"color": "white"}, "group": 5, "id": "Dean Thomas", "label": "Dean Thomas", "shape": "dot", "size": 3}, {"font": {"color": "white"}, "group": 7, "id": "Marcus Flint", "label": "Marcus Flint", "shape": "dot", "size": 3}, {"font": {"color": "white"}, "group": 7, "id": "Alicia Spinnet", "label": "Alicia Spinnet", "shape": "dot", "size": 2}, {"font": {"color": "white"}, "group": 5, "id": "Katie Bell", "label": "Katie Bell", "shape": "dot", "size": 2}, {"font": {"color": "white"}, "group": 7, "id": "Angelina Johnson", "label": "Angelina Johnson", "shape": "dot", "size": 5}, {"font": {"color": "white"}, "group": 7, "id": "Adrian Pucey", "label": "Adrian Pucey", "shape": "dot", "size": 2}, {"font": {"color": "white"}, "group": 6, "id": "Fluffy", "label": "Fluffy", "shape": "dot", "size": 8}, {"font": {"color": "white"}, "group": 1, "id": "Greek chappie", "label": "Greek chappie", "shape": "dot", "size": 1}, {"font": {"color": "white"}, "group": 5, "id": "Nicolas Flamel", "label": "Nicolas Flamel", "shape": "dot", "size": 5}, {"font": {"color": "white"}, "group": 5, "id": "Fred Weasley ", "label": "Fred Weasley ", "shape": "dot", "size": 5}, {"font": {"color": "white"}, "group": 1, "id": "Severus Snape", "label": "Severus Snape", "shape": "dot", "size": 1}, {"font": {"color": "white"}, "group": 6, "id": "Ronan", "label": "Ronan", "shape": "dot", "size": 3}, {"font": {"color": "white"}, "group": 6, "id": "Firenze", "label": "Firenze", "shape": "dot", "size": 3}, {"font": {"color": "white"}, "group": 6, "id": "Bane", "label": "Bane", "shape": "dot", "size": 5}, {"font": {"color": "white"}, "group": 5, "id": "Elfric the Eager", "label": "Elfric the Eager", "shape": "dot", "size": 2}, {"font": {"color": "white"}, "group": 5, "id": "Perenelle Flamel", "label": "Perenelle Flamel", "shape": "dot", "size": 2}, {"font": {"color": "white"}, "group": 0, "id": "Ted Tonks", "label": "Ted Tonks", "shape": "dot", "size": 2}, {"font": {"color": "white"}, "group": 0, "id": "Tufty", "label": "Tufty", "shape": "dot", "size": 2}, {"font": {"color": "white"}, "group": 2, "id": "Dennis", "label": "Dennis", "shape": "dot", "size": 2}, {"font": {"color": "white"}, "group": 2, "id": "Dennis Creevey", "label": "Dennis Creevey", "shape": "dot", "size": 2}, {"font": {"color": "white"}, "group": 2, "id": "Dennis Moon", "label": "Dennis Moon", "shape": "dot", "size": 2}, {"font": {"color": "white"}, "group": 2, "id": "Malcolm", "label": "Malcolm", "shape": "dot", "size": 2}, {"font": {"color": "white"}, "group": 2, "id": "Malcolm Baddock", "label": "Malcolm Baddock", "shape": "dot", "size": 2}, {"font": {"color": "white"}, "group": 2, "id": "Malcolm McGonagall", "label": "Malcolm McGonagall", "shape": "dot", "size": 2}, {"font": {"color": "white"}, "group": 3, "id": "Lily Luna Potter", "label": "Lily Luna Potter", "shape": "dot", "size": 2}, {"font": {"color": "white"}, "group": 4, "id": "Tom", "label": "Tom", "shape": "dot", "size": 2}, {"font": {"color": "white"}, "group": 4, "id": "Tom ", "label": "Tom ", "shape": "dot", "size": 2}, {"font": {"color": "white"}, "group": 5, "id": "Crabbe Sr.", "label": "Crabbe Sr.", "shape": "dot", "size": 2}, {"font": {"color": "white"}, "group": 5, "id": "Trevor", "label": "Trevor", "shape": "dot", "size": 1}, {"font": {"color": "white"}, "group": 5, "id": "Oliver Rivers", "label": "Oliver Rivers", "shape": "dot", "size": 2}, {"font": {"color": "white"}, "group": 8, "id": "Hengist of Woodcroft", "label": "Hengist of Woodcroft", "shape": "dot", "size": 2}, {"font": {"color": "white"}, "group": 8, "id": "Alberic Grunnion", "label": "Alberic Grunnion", "shape": "dot", "size": 2}, {"font": {"color": "white"}, "group": 8, "id": "Circe", "label": "Circe", "shape": "dot", "size": 2}, {"font": {"color": "white"}, "group": 8, "id": "Paracelsus", "label": "Paracelsus", "shape": "dot", "size": 2}, {"font": {"color": "white"}, "group": 8, "id": "Merlin", "label": "Merlin", "shape": "dot", "size": 2}, {"font": {"color": "white"}, "group": 1, "id": "Susan Blancheflower", "label": "Susan Blancheflower", "shape": "dot", "size": 2}, {"font": {"color": "white"}, "group": 1, "id": "Emeric Switch", "label": "Emeric Switch", "shape": "dot", "size": 2}]);
+        edges = new vis.DataSet([{"from": "Dudley Dursley", "label": 1, "to": "Harry Potter", "value": 843, "weight": 1}, {"from": "Dudley Dursley", "label": 1, "to": "Jim McGuffin", "value": 5, "weight": 1}, {"from": "Dudley Dursley", "label": 1, "to": "Petunia Dursley", "value": 5, "weight": 1}, {"from": "Dudley Dursley", "label": 1, "to": "Vernon Dursley", "value": 10, "weight": 1}, {"from": "Dudley Dursley", "label": 1, "to": "Yvonne", "value": 5, "weight": 1}, {"from": "Dudley Dursley", "label": 1, "to": "Piers Polkiss", "value": 39, "weight": 1}, {"from": "Dudley Dursley", "label": 1, "to": "Dennis Bishop", "value": 5, "weight": 1}, {"from": "Dudley Dursley", "label": 1, "to": "Gordon", "value": 6, "weight": 1}, {"from": "Dudley Dursley", "label": 1, "to": "Smeltings school nurse", "value": 12, "weight": 1}, {"from": "Dudley Dursley", "label": 1, "to": "Hogwarts house-elves", "value": 5, "weight": 1}, {"from": "Dudley Dursley", "label": 1, "to": "Hogwarts governors", "value": 5, "weight": 1}, {"from": "Dudley Dursley", "label": 1, "to": "Ron Weasley", "value": 5, "weight": 1}, {"from": "Dudley Dursley", "label": 1, "to": "Draco Malfoy", "value": 6, "weight": 1}, {"from": "Harry Potter", "label": 1, "to": "Ted", "value": 5, "weight": 1}, {"from": "Harry Potter", "label": 1, "to": "Petunia Dursley", "value": 26, "weight": 1}, {"from": "Harry Potter", "label": 1, "to": "Albus Dumbledore", "value": 56, "weight": 1}, {"from": "Harry Potter", "label": 1, "to": "Dedalus Diggle", "value": 31, "weight": 1}, {"from": "Harry Potter", "label": 1, "to": "James Potter", "value": 15, "weight": 1}, {"from": "Harry Potter", "label": 1, "to": "Albus Potter", "value": 10, "weight": 1}, {"from": "Harry Potter", "label": 1, "to": "Vernon Dudley", "value": 21, "weight": 1}, {"from": "Harry Potter", "label": 1, "to": "Snowy", "value": 16, "weight": 1}, {"from": "Harry Potter", "label": 1, "to": "Piers Polkiss", "value": 5, "weight": 1}, {"from": "Harry Potter", "label": 1, "to": "Smeltings school nurse", "value": 16, "weight": 1}, {"from": "Harry Potter", "label": 1, "to": "Vernon Dursley", "value": 31, "weight": 1}, {"from": "Harry Potter", "label": 1, "to": "Uncle Bilius", "value": 6, "weight": 1}, {"from": "Harry Potter", "label": 1, "to": "Uncle Nobby", "value": 5, "weight": 1}, {"from": "Harry Potter", "label": 1, "to": "Rubeus Hagrid", "value": 20, "weight": 1}, {"from": "Harry Potter", "label": 1, "to": "Hogwarts governors", "value": 31, "weight": 1}, {"from": "Harry Potter", "label": 1, "to": "Hogwarts house-elves", "value": 41, "weight": 1}, {"from": "Harry Potter", "label": 1, "to": "Minerva McGonagall", "value": 11, "weight": 1}, {"from": "Harry Potter", "label": 1, "to": "Lily Moon", "value": 5, "weight": 1}, {"from": "Harry Potter", "label": 1, "to": "Lily Potter", "value": 5, "weight": 1}, {"from": "Harry Potter", "label": 1, "to": "Cornelius Fudge", "value": 5, "weight": 1}, {"from": "Harry Potter", "label": 1, "to": "Adalbert Waffling", "value": 11, "weight": 1}, {"from": "Harry Potter", "label": 1, "to": "Tom Marvolo Riddle", "value": 5, "weight": 1}, {"from": "Harry Potter", "label": 1, "to": "Tom Riddle Sr.", "value": 6, "weight": 1}, {"from": "Harry Potter", "label": 1, "to": "Doris Crockford", "value": 21, "weight": 1}, {"from": "Harry Potter", "label": 1, "to": "Griphook", "value": 40, "weight": 1}, {"from": "Harry Potter", "label": 1, "to": "Madam Malkin", "value": 12, "weight": 1}, {"from": "Harry Potter", "label": 1, "to": "Muggle Prime Minister", "value": 5, "weight": 1}, {"from": "Harry Potter", "label": 1, "to": "Muggle tramp", "value": 5, "weight": 1}, {"from": "Harry Potter", "label": 1, "to": "Hedwig", "value": 52, "weight": 1}, {"from": "Harry Potter", "label": 1, "to": "Ginny Weasley", "value": 35, "weight": 1}, {"from": "Harry Potter", "label": 1, "to": "Percy Weasley", "value": 134, "weight": 1}, {"from": "Harry Potter", "label": 1, "to": "Ron Weasley", "value": 1532, "weight": 1}, {"from": "Harry Potter", "label": 1, "to": "Neville Longbottom", "value": 460, "weight": 1}, {"from": "Harry Potter", "label": 1, "to": "Lee Jordan", "value": 41, "weight": 1}, {"from": "Harry Potter", "label": 1, "to": "Fred Weasley", "value": 53, "weight": 1}, {"from": "Harry Potter", "label": 1, "to": "George Weasley", "value": 72, "weight": 1}, {"from": "Harry Potter", "label": 1, "to": "Bill Weasley", "value": 15, "weight": 1}, {"from": "Harry Potter", "label": 1, "to": "Dark Lord", "value": 20, "weight": 1}, {"from": "Harry Potter", "label": 1, "to": "Hengist of Upper Barnton", "value": 5, "weight": 1}, {"from": "Harry Potter", "label": 1, "to": "Cliodna", "value": 5, "weight": 1}, {"from": "Harry Potter", "label": 1, "to": "Hermione Granger", "value": 184, "weight": 1}, {"from": "Harry Potter", "label": 1, "to": "Goyle Sr.", "value": 51, "weight": 1}, {"from": "Harry Potter", "label": 1, "to": "Draco Malfoy", "value": 52, "weight": 1}, {"from": "Harry Potter", "label": 1, "to": "Sorting Hat", "value": 5, "weight": 1}, {"from": "Harry Potter", "label": 1, "to": "Hannah Abbott", "value": 10, "weight": 1}, {"from": "Harry Potter", "label": 1, "to": "Hannah Cockleford", "value": 6, "weight": 1}, {"from": "Harry Potter", "label": 1, "to": "Susan Bones", "value": 5, "weight": 1}, {"from": "Harry Potter", "label": 1, "to": "Justin Finch-Fletchley", "value": 11, "weight": 1}, {"from": "Harry Potter", "label": 1, "to": "Seamus Finnigan", "value": 84, "weight": 1}, {"from": "Harry Potter", "label": 1, "to": "Nicholas Malfoy", "value": 10, "weight": 1}, {"from": "Harry Potter", "label": 1, "to": "Great Auntie Enid", "value": 5, "weight": 1}, {"from": "Harry Potter", "label": 1, "to": "Madam Hooch", "value": 15, "weight": 1}, {"from": "Harry Potter", "label": 1, "to": "Peeves", "value": 71, "weight": 1}, {"from": "Harry Potter", "label": 1, "to": "Emeric the Evil", "value": 5, "weight": 1}, {"from": "Harry Potter", "label": 1, "to": "Uric the Oddball", "value": 5, "weight": 1}, {"from": "Harry Potter", "label": 1, "to": "Fang", "value": 31, "weight": 1}, {"from": "Harry Potter", "label": 1, "to": "Charlie Baverstock", "value": 25, "weight": 1}, {"from": "Harry Potter", "label": 1, "to": "Charlie Weasley", "value": 46, "weight": 1}, {"from": "Harry Potter", "label": 1, "to": "Parvati Patil", "value": 25, "weight": 1}, {"from": "Harry Potter", "label": 1, "to": "Oliver Wood", "value": 22, "weight": 1}, {"from": "Harry Potter", "label": 1, "to": "Dean Thomas", "value": 31, "weight": 1}, {"from": "Harry Potter", "label": 1, "to": "Marcus Flint", "value": 21, "weight": 1}, {"from": "Harry Potter", "label": 1, "to": "Alicia Spinnet", "value": 6, "weight": 1}, {"from": "Harry Potter", "label": 1, "to": "Katie Bell", "value": 5, "weight": 1}, {"from": "Harry Potter", "label": 1, "to": "Angelina Johnson", "value": 11, "weight": 1}, {"from": "Harry Potter", "label": 1, "to": "Adrian Pucey", "value": 5, "weight": 1}, {"from": "Harry Potter", "label": 1, "to": "Fluffy", "value": 105, "weight": 1}, {"from": "Harry Potter", "label": 1, "to": "Greek chappie", "value": 11, "weight": 1}, {"from": "Harry Potter", "label": 1, "to": "Nicolas Flamel", "value": 72, "weight": 1}, {"from": "Harry Potter", "label": 1, "to": "Fred Weasley ", "value": 17, "weight": 1}, {"from": "Harry Potter", "label": 1, "to": "Severus Snape", "value": 10, "weight": 1}, {"from": "Harry Potter", "label": 1, "to": "Ronan", "value": 33, "weight": 1}, {"from": "Harry Potter", "label": 1, "to": "Firenze", "value": 73, "weight": 1}, {"from": "Harry Potter", "label": 1, "to": "Bane", "value": 20, "weight": 1}, {"from": "Harry Potter", "label": 1, "to": "Elfric the Eager", "value": 5, "weight": 1}, {"from": "Harry Potter", "label": 1, "to": "Perenelle Flamel", "value": 6, "weight": 1}, {"from": "Jim McGuffin", "label": 1, "to": "Ted Tonks", "value": 6, "weight": 1}, {"from": "Ted Tonks", "label": 1, "to": "Ted", "value": 6, "weight": 1}, {"from": "Petunia Dursley", "label": 1, "to": "Vernon Dudley", "value": 10, "weight": 1}, {"from": "Albus Dumbledore", "label": 1, "to": "James Potter", "value": 5, "weight": 1}, {"from": "Albus Dumbledore", "label": 1, "to": "Albus Potter", "value": 12, "weight": 1}, {"from": "Vernon Dursley", "label": 1, "to": "Vernon Dudley", "value": 42, "weight": 1}, {"from": "Vernon Dursley", "label": 1, "to": "Tufty", "value": 5, "weight": 1}, {"from": "Vernon Dudley", "label": 1, "to": "Yvonne", "value": 5, "weight": 1}, {"from": "Snowy", "label": 1, "to": "Tufty", "value": 6, "weight": 1}, {"from": "Dennis Bishop", "label": 1, "to": "Dennis", "value": 6, "weight": 1}, {"from": "Dennis", "label": 1, "to": "Dennis Creevey", "value": 6, "weight": 1}, {"from": "Dennis Creevey", "label": 1, "to": "Dennis Moon", "value": 6, "weight": 1}, {"from": "Dennis Moon", "label": 1, "to": "Malcolm", "value": 6, "weight": 1}, {"from": "Malcolm", "label": 1, "to": "Malcolm Baddock", "value": 6, "weight": 1}, {"from": "Malcolm Baddock", "label": 1, "to": "Malcolm McGonagall", "value": 6, "weight": 1}, {"from": "Malcolm McGonagall", "label": 1, "to": "Gordon", "value": 6, "weight": 1}, {"from": "Smeltings school nurse", "label": 1, "to": "Hedwig", "value": 5, "weight": 1}, {"from": "Uncle Bilius", "label": 1, "to": "Uncle Nobby", "value": 6, "weight": 1}, {"from": "Hogwarts governors", "label": 1, "to": "Hogwarts house-elves", "value": 66, "weight": 1}, {"from": "Hogwarts governors", "label": 1, "to": "Hedwig", "value": 5, "weight": 1}, {"from": "Hogwarts governors", "label": 1, "to": "Ron Weasley", "value": 5, "weight": 1}, {"from": "Hogwarts governors", "label": 1, "to": "Fluffy", "value": 5, "weight": 1}, {"from": "Hogwarts governors", "label": 1, "to": "Draco Malfoy", "value": 5, "weight": 1}, {"from": "Hogwarts house-elves", "label": 1, "to": "Cornelius Fudge", "value": 6, "weight": 1}, {"from": "Hogwarts house-elves", "label": 1, "to": "Fluffy", "value": 5, "weight": 1}, {"from": "Lily Moon", "label": 1, "to": "Lily Luna Potter", "value": 12, "weight": 1}, {"from": "Lily Moon", "label": 1, "to": "Lily Potter", "value": 6, "weight": 1}, {"from": "Lily Luna Potter", "label": 1, "to": "Lily Potter", "value": 12, "weight": 1}, {"from": "Tom Marvolo Riddle", "label": 1, "to": "Tom", "value": 6, "weight": 1}, {"from": "Tom", "label": 1, "to": "Tom ", "value": 6, "weight": 1}, {"from": "Tom ", "label": 1, "to": "Tom Riddle Sr.", "value": 6, "weight": 1}, {"from": "Muggle Prime Minister", "label": 1, "to": "Muggle tramp", "value": 6, "weight": 1}, {"from": "Hedwig", "label": 1, "to": "Lee Jordan", "value": 5, "weight": 1}, {"from": "Hedwig", "label": 1, "to": "Ron Weasley", "value": 21, "weight": 1}, {"from": "Hedwig", "label": 1, "to": "Fluffy", "value": 6, "weight": 1}, {"from": "Ginny Weasley", "label": 1, "to": "Percy Weasley", "value": 5, "weight": 1}, {"from": "Ginny Weasley", "label": 1, "to": "Ron Weasley", "value": 11, "weight": 1}, {"from": "Percy Weasley", "label": 1, "to": "Bill Weasley", "value": 5, "weight": 1}, {"from": "Percy Weasley", "label": 1, "to": "Fred Weasley", "value": 10, "weight": 1}, {"from": "Percy Weasley", "label": 1, "to": "Charlie Weasley", "value": 5, "weight": 1}, {"from": "Percy Weasley", "label": 1, "to": "Ron Weasley", "value": 22, "weight": 1}, {"from": "Percy Weasley", "label": 1, "to": "Madam Hooch", "value": 5, "weight": 1}, {"from": "Percy Weasley", "label": 1, "to": "Peeves", "value": 11, "weight": 1}, {"from": "Percy Weasley", "label": 1, "to": "Neville Longbottom", "value": 10, "weight": 1}, {"from": "Percy Weasley", "label": 1, "to": "Fred Weasley ", "value": 5, "weight": 1}, {"from": "Percy Weasley", "label": 1, "to": "George Weasley", "value": 5, "weight": 1}, {"from": "Ron Weasley", "label": 1, "to": "George Weasley", "value": 16, "weight": 1}, {"from": "Ron Weasley", "label": 1, "to": "Bill Weasley", "value": 5, "weight": 1}, {"from": "Ron Weasley", "label": 1, "to": "Nicolas Flamel", "value": 15, "weight": 1}, {"from": "Ron Weasley", "label": 1, "to": "Neville Longbottom", "value": 146, "weight": 1}, {"from": "Ron Weasley", "label": 1, "to": "Dark Lord", "value": 5, "weight": 1}, {"from": "Ron Weasley", "label": 1, "to": "Draco Malfoy", "value": 5, "weight": 1}, {"from": "Ron Weasley", "label": 1, "to": "Goyle Sr.", "value": 16, "weight": 1}, {"from": "Ron Weasley", "label": 1, "to": "Hermione Granger", "value": 105, "weight": 1}, {"from": "Ron Weasley", "label": 1, "to": "Fang", "value": 15, "weight": 1}, {"from": "Ron Weasley", "label": 1, "to": "Charlie Weasley", "value": 30, "weight": 1}, {"from": "Ron Weasley", "label": 1, "to": "Charlie Baverstock", "value": 37, "weight": 1}, {"from": "Ron Weasley", "label": 1, "to": "Seamus Finnigan", "value": 10, "weight": 1}, {"from": "Ron Weasley", "label": 1, "to": "Peeves", "value": 10, "weight": 1}, {"from": "Ron Weasley", "label": 1, "to": "Oliver Wood", "value": 5, "weight": 1}, {"from": "Ron Weasley", "label": 1, "to": "Parvati Patil", "value": 6, "weight": 1}, {"from": "Ron Weasley", "label": 1, "to": "Angelina Johnson", "value": 5, "weight": 1}, {"from": "Ron Weasley", "label": 1, "to": "Dean Thomas", "value": 11, "weight": 1}, {"from": "Ron Weasley", "label": 1, "to": "Fluffy", "value": 40, "weight": 1}, {"from": "Ron Weasley", "label": 1, "to": "Fred Weasley", "value": 10, "weight": 1}, {"from": "Ron Weasley", "label": 1, "to": "Bane", "value": 5, "weight": 1}, {"from": "Ron Weasley", "label": 1, "to": "Elfric the Eager", "value": 5, "weight": 1}, {"from": "Ron Weasley", "label": 1, "to": "Lee Jordan", "value": 10, "weight": 1}, {"from": "Neville Longbottom", "label": 1, "to": "Hermione Granger", "value": 31, "weight": 1}, {"from": "Neville Longbottom", "label": 1, "to": "Sorting Hat", "value": 5, "weight": 1}, {"from": "Neville Longbottom", "label": 1, "to": "Seamus Finnigan", "value": 44, "weight": 1}, {"from": "Neville Longbottom", "label": 1, "to": "Great Auntie Enid", "value": 5, "weight": 1}, {"from": "Neville Longbottom", "label": 1, "to": "Peeves", "value": 10, "weight": 1}, {"from": "Neville Longbottom", "label": 1, "to": "Draco Malfoy", "value": 15, "weight": 1}, {"from": "Neville Longbottom", "label": 1, "to": "Madam Hooch", "value": 15, "weight": 1}, {"from": "Neville Longbottom", "label": 1, "to": "Oliver Wood", "value": 5, "weight": 1}, {"from": "Neville Longbottom", "label": 1, "to": "Crabbe Sr.", "value": 6, "weight": 1}, {"from": "Neville Longbottom", "label": 1, "to": "Fred Weasley", "value": 5, "weight": 1}, {"from": "Neville Longbottom", "label": 1, "to": "Fang", "value": 17, "weight": 1}, {"from": "Neville Longbottom", "label": 1, "to": "Fluffy", "value": 15, "weight": 1}, {"from": "Neville Longbottom", "label": 1, "to": "Trevor", "value": 22, "weight": 1}, {"from": "Neville Longbottom", "label": 1, "to": "Goyle Sr.", "value": 5, "weight": 1}, {"from": "Lee Jordan", "label": 1, "to": "Charlie Weasley", "value": 5, "weight": 1}, {"from": "Lee Jordan", "label": 1, "to": "Angelina Johnson", "value": 5, "weight": 1}, {"from": "Lee Jordan", "label": 1, "to": "Alicia Spinnet", "value": 5, "weight": 1}, {"from": "Lee Jordan", "label": 1, "to": "Marcus Flint", "value": 5, "weight": 1}, {"from": "Lee Jordan", "label": 1, "to": "Adrian Pucey", "value": 5, "weight": 1}, {"from": "Fred Weasley", "label": 1, "to": "Fred Weasley ", "value": 60, "weight": 1}, {"from": "Fred Weasley", "label": 1, "to": "George Weasley", "value": 16, "weight": 1}, {"from": "Fred Weasley ", "label": 1, "to": "George Weasley", "value": 30, "weight": 1}, {"from": "Fred Weasley ", "label": 1, "to": "Charlie Baverstock", "value": 5, "weight": 1}, {"from": "George Weasley", "label": 1, "to": "Madam Hooch", "value": 5, "weight": 1}, {"from": "George Weasley", "label": 1, "to": "Oliver Rivers", "value": 5, "weight": 1}, {"from": "George Weasley", "label": 1, "to": "Katie Bell", "value": 5, "weight": 1}, {"from": "George Weasley", "label": 1, "to": "Angelina Johnson", "value": 5, "weight": 1}, {"from": "Bill Weasley", "label": 1, "to": "Charlie Baverstock", "value": 12, "weight": 1}, {"from": "Bill Weasley", "label": 1, "to": "Charlie Weasley", "value": 6, "weight": 1}, {"from": "Charlie Baverstock", "label": 1, "to": "Charlie Weasley", "value": 96, "weight": 1}, {"from": "Charlie Baverstock", "label": 1, "to": "Fang", "value": 5, "weight": 1}, {"from": "Charlie Weasley", "label": 1, "to": "Oliver Wood", "value": 5, "weight": 1}, {"from": "Charlie Weasley", "label": 1, "to": "Fang", "value": 5, "weight": 1}, {"from": "Dark Lord", "label": 1, "to": "Nicolas Flamel", "value": 6, "weight": 1}, {"from": "Nicolas Flamel", "label": 1, "to": "Hermione Granger", "value": 6, "weight": 1}, {"from": "Nicolas Flamel", "label": 1, "to": "Perenelle Flamel", "value": 6, "weight": 1}, {"from": "Hengist of Upper Barnton", "label": 1, "to": "Hengist of Woodcroft", "value": 6, "weight": 1}, {"from": "Hengist of Woodcroft", "label": 1, "to": "Alberic Grunnion", "value": 6, "weight": 1}, {"from": "Alberic Grunnion", "label": 1, "to": "Circe", "value": 6, "weight": 1}, {"from": "Circe", "label": 1, "to": "Paracelsus", "value": 6, "weight": 1}, {"from": "Paracelsus", "label": 1, "to": "Merlin", "value": 6, "weight": 1}, {"from": "Merlin", "label": 1, "to": "Cliodna", "value": 5, "weight": 1}, {"from": "Hermione Granger", "label": 1, "to": "Goyle Sr.", "value": 5, "weight": 1}, {"from": "Hermione Granger", "label": 1, "to": "Fluffy", "value": 6, "weight": 1}, {"from": "Hermione Granger", "label": 1, "to": "Ronan", "value": 5, "weight": 1}, {"from": "Hermione Granger", "label": 1, "to": "Bane", "value": 5, "weight": 1}, {"from": "Goyle Sr.", "label": 1, "to": "Crabbe Sr.", "value": 6, "weight": 1}, {"from": "Hannah Abbott", "label": 1, "to": "Hannah Cockleford", "value": 12, "weight": 1}, {"from": "Hannah Cockleford", "label": 1, "to": "Susan Blancheflower", "value": 5, "weight": 1}, {"from": "Susan Blancheflower", "label": 1, "to": "Susan Bones", "value": 18, "weight": 1}, {"from": "Seamus Finnigan", "label": 1, "to": "Dean Thomas", "value": 12, "weight": 1}, {"from": "Emeric the Evil", "label": 1, "to": "Emeric Switch", "value": 6, "weight": 1}, {"from": "Emeric Switch", "label": 1, "to": "Uric the Oddball", "value": 6, "weight": 1}, {"from": "Oliver Wood", "label": 1, "to": "Oliver Rivers", "value": 6, "weight": 1}, {"from": "Marcus Flint", "label": 1, "to": "Angelina Johnson", "value": 5, "weight": 1}, {"from": "Fluffy", "label": 1, "to": "Firenze", "value": 5, "weight": 1}, {"from": "Ronan", "label": 1, "to": "Bane", "value": 18, "weight": 1}, {"from": "Bane", "label": 1, "to": "Firenze", "value": 26, "weight": 1}]);
+
+        // adding nodes and edges to the graph
+        data = {nodes: nodes, edges: edges};
+
+        var options = {
+    "configure": {
+        "enabled": false
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": true,
+            "type": "dynamic"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "enabled": true,
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+        
+        
+
+        
+
+        network = new vis.Network(container, data, options);
+	 
+        
+
+
+        
+        network.on("stabilizationProgress", function(params) {
+      		document.getElementById('loadingBar').removeAttribute("style");
+	        var maxWidth = 496;
+	        var minWidth = 20;
+	        var widthFactor = params.iterations/params.total;
+	        var width = Math.max(minWidth,maxWidth * widthFactor);
+
+	        document.getElementById('bar').style.width = width + 'px';
+	        document.getElementById('text').innerHTML = Math.round(widthFactor*100) + '%';
+	    });
+	    network.once("stabilizationIterationsDone", function() {
+	        document.getElementById('text').innerHTML = '100%';
+	        document.getElementById('bar').style.width = '496px';
+	        document.getElementById('loadingBar').style.opacity = 0;
+	        // really clean the dom element
+	        setTimeout(function () {document.getElementById('loadingBar').style.display = 'none';}, 500);
+	    });
+        
+
+        return network;
+
+    }
+
+    drawGraph();
+
+</script>
+</body>
+</html>

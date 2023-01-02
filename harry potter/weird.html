@@ -1,0 +1,212 @@
+<html>
+<head>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vis-network@latest/styles/vis-network.css" type="text/css" />
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/vis-network@latest/dist/vis-network.min.js"> </script>
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+
+<style type="text/css">
+
+        #mynetwork {
+            width: 1000px;
+            height: 750px;
+            background-color: #222222;
+            border: 1px solid lightgray;
+            position: relative;
+            float: left;
+        }
+
+        
+        #loadingBar {
+            position:absolute;
+            top:0px;
+            left:0px;
+            width: 1000px;
+            height: 750px;
+            background-color:rgba(200,200,200,0.8);
+            -webkit-transition: all 0.5s ease;
+            -moz-transition: all 0.5s ease;
+            -ms-transition: all 0.5s ease;
+            -o-transition: all 0.5s ease;
+            transition: all 0.5s ease;
+            opacity:1;
+        }
+
+        #bar {
+            position:absolute;
+            top:0px;
+            left:0px;
+            width:20px;
+            height:20px;
+            margin:auto auto auto auto;
+            border-radius:11px;
+            border:2px solid rgba(30,30,30,0.05);
+            background: rgb(0, 173, 246); /* Old browsers */
+            box-shadow: 2px 0px 4px rgba(0,0,0,0.4);
+        }
+
+        #border {
+            position:absolute;
+            top:10px;
+            left:10px;
+            width:500px;
+            height:23px;
+            margin:auto auto auto auto;
+            box-shadow: 0px 0px 4px rgba(0,0,0,0.2);
+            border-radius:10px;
+        }
+
+        #text {
+            position:absolute;
+            top:8px;
+            left:530px;
+            width:30px;
+            height:50px;
+            margin:auto auto auto auto;
+            font-size:22px;
+            color: #000000;
+        }
+
+        div.outerBorder {
+            position:relative;
+            top:400px;
+            width:600px;
+            height:44px;
+            margin:auto auto auto auto;
+            border:8px solid rgba(0,0,0,0.1);
+            background: rgb(252,252,252); /* Old browsers */
+            background: -moz-linear-gradient(top,  rgba(252,252,252,1) 0%, rgba(237,237,237,1) 100%); /* FF3.6+ */
+            background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(252,252,252,1)), color-stop(100%,rgba(237,237,237,1))); /* Chrome,Safari4+ */
+            background: -webkit-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* Chrome10+,Safari5.1+ */
+            background: -o-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* Opera 11.10+ */
+            background: -ms-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* IE10+ */
+            background: linear-gradient(to bottom,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* W3C */
+            filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcfcfc', endColorstr='#ededed',GradientType=0 ); /* IE6-9 */
+            border-radius:72px;
+            box-shadow: 0px 0px 10px rgba(0,0,0,0.2);
+        }
+        
+
+        
+
+        
+</style>
+
+</head>
+
+<body>
+<div id = "mynetwork"></div>
+
+<div id="loadingBar">
+    <div class="outerBorder">
+        <div id="text">0%</div>
+        <div id="border">
+            <div id="bar"></div>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+
+    // initialize global variables.
+    var edges;
+    var nodes;
+    var network; 
+    var container;
+    var options, data;
+
+    
+    // This method is responsible for drawing the graph, returns the drawn network
+    function drawGraph() {
+        var container = document.getElementById('mynetwork');
+        
+        
+
+        // parsing and collecting nodes and edges from the python
+        nodes = new vis.DataSet([{"alpha": 0.3, "color": "#93d952", "font": {"color": "white"}, "id": "Dudley Dursley", "label": "Dudley Dursley", "shape": "dot", "title": "Dudley Dursley"}, {"color": "#93d952", "font": {"color": "white"}, "id": "Harry Potter", "label": "Harry Potter", "shape": "dot", "title": "Harry Potter"}, {"color": "#93d952", "font": {"color": "white"}, "id": "Jim McGuffin", "label": "Jim McGuffin", "shape": "dot", "title": "Jim McGuffin"}, {"color": "#93d952", "font": {"color": "white"}, "id": "Ted Tonks", "label": "Ted Tonks", "shape": "dot", "title": "Ted Tonks"}, {"alpha": 0.3, "color": "#93d952", "font": {"color": "white"}, "id": "Ted", "label": "Ted", "shape": "dot", "title": "Ted"}, {"color": "#93d952", "font": {"color": "white"}, "id": "Petunia Dursley", "label": "Petunia Dursley", "shape": "dot", "title": "Petunia Dursley"}, {"alpha": 0.3, "color": "#93d952", "font": {"color": "white"}, "id": "Albus Dumbledore", "label": "Albus Dumbledore", "shape": "dot", "title": "Albus Dumbledore"}, {"alpha": 0.3, "color": "#93d952", "font": {"color": "white"}, "id": "Dedalus Diggle", "label": "Dedalus Diggle", "shape": "dot", "title": "Dedalus Diggle"}, {"color": "#93d952", "font": {"color": "white"}, "id": "James Potter", "label": "James Potter", "shape": "dot", "title": "James Potter"}, {"color": "#93d952", "font": {"color": "white"}, "id": "Albus Potter", "label": "Albus Potter", "shape": "dot", "title": "Albus Potter"}, {"color": "#93d952", "font": {"color": "white"}, "id": "Vernon Dursley", "label": "Vernon Dursley", "shape": "dot", "title": "Vernon Dursley"}, {"alpha": 0.3, "color": "#93d952", "font": {"color": "white"}, "id": "Vernon Dudley", "label": "Vernon Dudley", "shape": "dot", "title": "Vernon Dudley"}, {"color": "#93d952", "font": {"color": "white"}, "id": "Snowy", "label": "Snowy", "shape": "dot", "title": "Snowy"}, {"color": "#93d952", "font": {"color": "white"}, "id": "Tufty", "label": "Tufty", "shape": "dot", "title": "Tufty"}, {"color": "#93d952", "font": {"color": "white"}, "id": "Yvonne", "label": "Yvonne", "shape": "dot", "title": "Yvonne"}, {"color": "#93d952", "font": {"color": "white"}, "id": "Piers Polkiss", "label": "Piers Polkiss", "shape": "dot", "title": "Piers Polkiss"}, {"alpha": 0.3, "color": "#93d952", "font": {"color": "white"}, "id": "Dennis Bishop", "label": "Dennis Bishop", "shape": "dot", "title": "Dennis Bishop"}, {"alpha": 0.3, "color": "#93d952", "font": {"color": "white"}, "id": "Dennis", "label": "Dennis", "shape": "dot", "title": "Dennis"}, {"color": "#93d952", "font": {"color": "white"}, "id": "Dennis Creevey", "label": "Dennis Creevey", "shape": "dot", "title": "Dennis Creevey"}, {"color": "#93d952", "font": {"color": "white"}, "id": "Dennis Moon", "label": "Dennis Moon", "shape": "dot", "title": "Dennis Moon"}, {"color": "#93d952", "font": {"color": "white"}, "id": "Malcolm", "label": "Malcolm", "shape": "dot", "title": "Malcolm"}, {"color": "#93d952", "font": {"color": "white"}, "id": "Malcolm Baddock", "label": "Malcolm Baddock", "shape": "dot", "title": "Malcolm Baddock"}, {"color": "#93d952", "font": {"color": "white"}, "id": "Malcolm McGonagall", "label": "Malcolm McGonagall", "shape": "dot", "title": "Malcolm McGonagall"}, {"alpha": 0.3, "color": "#93d952", "font": {"color": "white"}, "id": "Gordon", "label": "Gordon", "shape": "dot", "title": "Gordon"}, {"color": "#93d952", "font": {"color": "white"}, "id": "Smeltings school nurse", "label": "Smeltings school nurse", "shape": "dot", "title": "Smeltings school nurse"}, {"color": "#93d952", "font": {"color": "white"}, "id": "Uncle Bilius", "label": "Uncle Bilius", "shape": "dot", "title": "Uncle Bilius"}, {"color": "#93d952", "font": {"color": "white"}, "id": "Uncle Nobby", "label": "Uncle Nobby", "shape": "dot", "title": "Uncle Nobby"}, {"color": "#93d952", "font": {"color": "white"}, "id": "Rubeus Hagrid", "label": "Rubeus Hagrid", "shape": "dot", "title": "Rubeus Hagrid"}, {"color": "#93d952", "font": {"color": "white"}, "id": "Hogwarts governors", "label": "Hogwarts governors", "shape": "dot", "title": "Hogwarts governors"}, {"color": "#93d952", "font": {"color": "white"}, "id": "Hogwarts house-elves", "label": "Hogwarts house-elves", "shape": "dot", "title": "Hogwarts house-elves"}, {"color": "#93d952", "font": {"color": "white"}, "id": "Minerva McGonagall", "label": "Minerva McGonagall", "shape": "dot", "title": "Minerva McGonagall"}, {"color": "#93d952", "font": {"color": "white"}, "id": "Lily Moon", "label": "Lily Moon", "shape": "dot", "title": "Lily Moon"}, {"alpha": 0.3, "color": "#93d952", "font": {"color": "white"}, "id": "Lily Luna Potter", "label": "Lily Luna Potter", "shape": "dot", "title": "Lily Luna Potter"}, {"color": "#93d952", "font": {"color": "white"}, "id": "Lily Potter", "label": "Lily Potter", "shape": "dot", "title": "Lily Potter"}, {"alpha": 0.3, "color": "#93d952", "font": {"color": "white"}, "id": "Cornelius Fudge", "label": "Cornelius Fudge", "shape": "dot", "title": "Cornelius Fudge"}, {"alpha": 0.3, "color": "#93d952", "font": {"color": "white"}, "id": "Adalbert Waffling", "label": "Adalbert Waffling", "shape": "dot", "title": "Adalbert Waffling"}, {"color": "#93d952", "font": {"color": "white"}, "id": "Tom Marvolo Riddle", "label": "Tom Marvolo Riddle", "shape": "dot", "title": "Tom Marvolo Riddle"}, {"alpha": 0.3, "color": "#93d952", "font": {"color": "white"}, "id": "Tom", "label": "Tom", "shape": "dot", "title": "Tom"}, {"color": "#93d952", "font": {"color": "white"}, "id": "Tom ", "label": "Tom ", "shape": "dot", "title": "Tom "}, {"color": "#93d952", "font": {"color": "white"}, "id": "Tom Riddle Sr.", "label": "Tom Riddle Sr.", "shape": "dot", "title": "Tom Riddle Sr."}, {"alpha": 0.3, "color": "#93d952", "font": {"color": "white"}, "id": "Doris Crockford", "label": "Doris Crockford", "shape": "dot", "title": "Doris Crockford"}, {"alpha": 0.3, "color": "#93d952", "font": {"color": "white"}, "id": "Griphook", "label": "Griphook", "shape": "dot", "title": "Griphook"}, {"color": "#93d952", "font": {"color": "white"}, "id": "Madam Malkin", "label": "Madam Malkin", "shape": "dot", "title": "Madam Malkin"}, {"color": "#93d952", "font": {"color": "white"}, "id": "Muggle Prime Minister", "label": "Muggle Prime Minister", "shape": "dot", "title": "Muggle Prime Minister"}, {"color": "#93d952", "font": {"color": "white"}, "id": "Muggle tramp", "label": "Muggle tramp", "shape": "dot", "title": "Muggle tramp"}, {"color": "#93d952", "font": {"color": "white"}, "id": "Hedwig", "label": "Hedwig", "shape": "dot", "title": "Hedwig"}, {"alpha": 0.3, "color": "#93d952", "font": {"color": "white"}, "id": "Ginny Weasley", "label": "Ginny Weasley", "shape": "dot", "title": "Ginny Weasley"}, {"color": "#93d952", "font": {"color": "white"}, "id": "Percy Weasley", "label": "Percy Weasley", "shape": "dot", "title": "Percy Weasley"}, {"color": "#93d952", "font": {"color": "white"}, "id": "Ron Weasley", "label": "Ron Weasley", "shape": "dot", "title": "Ron Weasley"}, {"color": "#93d952", "font": {"color": "white"}, "id": "Neville Longbottom", "label": "Neville Longbottom", "shape": "dot", "title": "Neville Longbottom"}, {"color": "#93d952", "font": {"color": "white"}, "id": "Lee Jordan", "label": "Lee Jordan", "shape": "dot", "title": "Lee Jordan"}, {"alpha": 0.3, "color": "#93d952", "font": {"color": "white"}, "id": "Fred Weasley", "label": "Fred Weasley", "shape": "dot", "title": "Fred Weasley"}, {"color": "#93d952", "font": {"color": "white"}, "id": "Fred Weasley ", "label": "Fred Weasley ", "shape": "dot", "title": "Fred Weasley "}, {"color": "#93d952", "font": {"color": "white"}, "id": "George Weasley", "label": "George Weasley", "shape": "dot", "title": "George Weasley"}, {"alpha": 0.3, "color": "#93d952", "font": {"color": "white"}, "id": "Bill Weasley", "label": "Bill Weasley", "shape": "dot", "title": "Bill Weasley"}, {"color": "#93d952", "font": {"color": "white"}, "id": "Charlie Baverstock", "label": "Charlie Baverstock", "shape": "dot", "title": "Charlie Baverstock"}, {"color": "#93d952", "font": {"color": "white"}, "id": "Charlie Weasley", "label": "Charlie Weasley", "shape": "dot", "title": "Charlie Weasley"}, {"alpha": 0.3, "color": "#93d952", "font": {"color": "white"}, "id": "Dark Lord", "label": "Dark Lord", "shape": "dot", "title": "Dark Lord"}, {"color": "#93d952", "font": {"color": "white"}, "id": "Nicolas Flamel", "label": "Nicolas Flamel", "shape": "dot", "title": "Nicolas Flamel"}, {"color": "#93d952", "font": {"color": "white"}, "id": "Hengist of Upper Barnton", "label": "Hengist of Upper Barnton", "shape": "dot", "title": "Hengist of Upper Barnton"}, {"color": "#93d952", "font": {"color": "white"}, "id": "Hengist of Woodcroft", "label": "Hengist of Woodcroft", "shape": "dot", "title": "Hengist of Woodcroft"}, {"alpha": 0.3, "color": "#93d952", "font": {"color": "white"}, "id": "Alberic Grunnion", "label": "Alberic Grunnion", "shape": "dot", "title": "Alberic Grunnion"}, {"color": "#93d952", "font": {"color": "white"}, "id": "Circe", "label": "Circe", "shape": "dot", "title": "Circe"}, {"color": "#93d952", "font": {"color": "white"}, "id": "Paracelsus", "label": "Paracelsus", "shape": "dot", "title": "Paracelsus"}, {"alpha": 0.3, "color": "#93d952", "font": {"color": "white"}, "id": "Merlin", "label": "Merlin", "shape": "dot", "title": "Merlin"}, {"alpha": 0.3, "color": "#93d952", "font": {"color": "white"}, "id": "Cliodna", "label": "Cliodna", "shape": "dot", "title": "Cliodna"}, {"color": "#93d952", "font": {"color": "white"}, "id": "Hermione Granger", "label": "Hermione Granger", "shape": "dot", "title": "Hermione Granger"}, {"alpha": 0.3, "color": "#93d952", "font": {"color": "white"}, "id": "Goyle Sr.", "label": "Goyle Sr.", "shape": "dot", "title": "Goyle Sr."}, {"alpha": 0.3, "color": "#93d952", "font": {"color": "white"}, "id": "Draco Malfoy", "label": "Draco Malfoy", "shape": "dot", "title": "Draco Malfoy"}, {"color": "#93d952", "font": {"color": "white"}, "id": "Sorting Hat", "label": "Sorting Hat", "shape": "dot", "title": "Sorting Hat"}, {"alpha": 0.3, "color": "#93d952", "font": {"color": "white"}, "id": "Hannah Abbott", "label": "Hannah Abbott", "shape": "dot", "title": "Hannah Abbott"}, {"color": "#93d952", "font": {"color": "white"}, "id": "Hannah Cockleford", "label": "Hannah Cockleford", "shape": "dot", "title": "Hannah Cockleford"}, {"color": "#93d952", "font": {"color": "white"}, "id": "Susan Blancheflower", "label": "Susan Blancheflower", "shape": "dot", "title": "Susan Blancheflower"}, {"color": "#93d952", "font": {"color": "white"}, "id": "Susan Bones", "label": "Susan Bones", "shape": "dot", "title": "Susan Bones"}, {"color": "#93d952", "font": {"color": "white"}, "id": "Justin Finch-Fletchley", "label": "Justin Finch-Fletchley", "shape": "dot", "title": "Justin Finch-Fletchley"}, {"color": "#93d952", "font": {"color": "white"}, "id": "Seamus Finnigan", "label": "Seamus Finnigan", "shape": "dot", "title": "Seamus Finnigan"}, {"color": "#93d952", "font": {"color": "white"}, "id": "Nicholas Malfoy", "label": "Nicholas Malfoy", "shape": "dot", "title": "Nicholas Malfoy"}, {"alpha": 0.3, "color": "#93d952", "font": {"color": "white"}, "id": "Great Auntie Enid", "label": "Great Auntie Enid", "shape": "dot", "title": "Great Auntie Enid"}, {"alpha": 0.3, "color": "#93d952", "font": {"color": "white"}, "id": "Madam Hooch", "label": "Madam Hooch", "shape": "dot", "title": "Madam Hooch"}, {"color": "#93d952", "font": {"color": "white"}, "id": "Peeves", "label": "Peeves", "shape": "dot", "title": "Peeves"}, {"alpha": 0.3, "color": "#93d952", "font": {"color": "white"}, "id": "Emeric the Evil", "label": "Emeric the Evil", "shape": "dot", "title": "Emeric the Evil"}, {"alpha": 0.3, "color": "#93d952", "font": {"color": "white"}, "id": "Emeric Switch", "label": "Emeric Switch", "shape": "dot", "title": "Emeric Switch"}, {"color": "#93d952", "font": {"color": "white"}, "id": "Uric the Oddball", "label": "Uric the Oddball", "shape": "dot", "title": "Uric the Oddball"}, {"alpha": 0.3, "color": "#93d952", "font": {"color": "white"}, "id": "Fang", "label": "Fang", "shape": "dot", "title": "Fang"}, {"color": "#93d952", "font": {"color": "white"}, "id": "Parvati Patil", "label": "Parvati Patil", "shape": "dot", "title": "Parvati Patil"}, {"color": "#93d952", "font": {"color": "white"}, "id": "Oliver Wood", "label": "Oliver Wood", "shape": "dot", "title": "Oliver Wood"}, {"alpha": 0.3, "color": "#93d952", "font": {"color": "white"}, "id": "Dean Thomas", "label": "Dean Thomas", "shape": "dot", "title": "Dean Thomas"}, {"color": "#93d952", "font": {"color": "white"}, "id": "Oliver Rivers", "label": "Oliver Rivers", "shape": "dot", "title": "Oliver Rivers"}, {"color": "#93d952", "font": {"color": "white"}, "id": "Marcus Flint", "label": "Marcus Flint", "shape": "dot", "title": "Marcus Flint"}, {"alpha": 0.3, "color": "#93d952", "font": {"color": "white"}, "id": "Angelina Johnson", "label": "Angelina Johnson", "shape": "dot", "title": "Angelina Johnson"}, {"alpha": 0.3, "color": "#93d952", "font": {"color": "white"}, "id": "Alicia Spinnet", "label": "Alicia Spinnet", "shape": "dot", "title": "Alicia Spinnet"}, {"color": "#93d952", "font": {"color": "white"}, "id": "Katie Bell", "label": "Katie Bell", "shape": "dot", "title": "Katie Bell"}, {"alpha": 0.3, "color": "#93d952", "font": {"color": "white"}, "id": "Adrian Pucey", "label": "Adrian Pucey", "shape": "dot", "title": "Adrian Pucey"}, {"alpha": 0.3, "color": "#93d952", "font": {"color": "white"}, "id": "Fluffy", "label": "Fluffy", "shape": "dot", "title": "Fluffy"}, {"alpha": 0.3, "color": "#93d952", "font": {"color": "white"}, "id": "Greek chappie", "label": "Greek chappie", "shape": "dot", "title": "Greek chappie"}, {"alpha": 0.3, "color": "#93d952", "font": {"color": "white"}, "id": "Crabbe Sr.", "label": "Crabbe Sr.", "shape": "dot", "title": "Crabbe Sr."}, {"color": "#93d952", "font": {"color": "white"}, "id": "Severus Snape", "label": "Severus Snape", "shape": "dot", "title": "Severus Snape"}, {"color": "#93d952", "font": {"color": "white"}, "id": "Ronan", "label": "Ronan", "shape": "dot", "title": "Ronan"}, {"alpha": 0.3, "color": "#93d952", "font": {"color": "white"}, "id": "Bane", "label": "Bane", "shape": "dot", "title": "Bane"}, {"alpha": 0.3, "color": "#93d952", "font": {"color": "white"}, "id": "Firenze", "label": "Firenze", "shape": "dot", "title": "Firenze"}, {"alpha": 0.3, "color": "#93d952", "font": {"color": "white"}, "id": "Elfric the Eager", "label": "Elfric the Eager", "shape": "dot", "title": "Elfric the Eager"}, {"color": "#93d952", "font": {"color": "white"}, "id": "Trevor", "label": "Trevor", "shape": "dot", "title": "Trevor"}, {"color": "#93d952", "font": {"color": "white"}, "id": "Perenelle Flamel", "label": "Perenelle Flamel", "shape": "dot", "title": "Perenelle Flamel"}]);
+        edges = new vis.DataSet([{"color": "#93d952", "from": "Dudley Dursley", "to": "Harry Potter", "value": 843}, {"color": "#93d952", "from": "Dudley Dursley", "to": "Jim McGuffin", "value": 5}, {"color": "#93d952", "from": "Jim McGuffin", "to": "Ted Tonks", "value": 6}, {"color": "#93d952", "from": "Ted", "to": "Ted Tonks", "value": 6}, {"color": "#93d952", "from": "Harry Potter", "to": "Ted", "value": 5}, {"color": "#93d952", "from": "Harry Potter", "to": "Petunia Dursley", "value": 26}, {"color": "#93d952", "from": "Dudley Dursley", "to": "Petunia Dursley", "value": 5}, {"color": "#93d952", "from": "Albus Dumbledore", "to": "Harry Potter", "value": 56}, {"color": "#93d952", "from": "Dedalus Diggle", "to": "Harry Potter", "value": 31}, {"color": "#93d952", "from": "Harry Potter", "to": "James Potter", "value": 15}, {"color": "#93d952", "from": "Albus Dumbledore", "to": "James Potter", "value": 5}, {"color": "#93d952", "from": "Albus Dumbledore", "to": "Albus Potter", "value": 12}, {"color": "#93d952", "from": "Albus Potter", "to": "Harry Potter", "value": 10}, {"color": "#93d952", "from": "Dudley Dursley", "to": "Vernon Dursley", "value": 10}, {"color": "#93d952", "from": "Vernon Dudley", "to": "Vernon Dursley", "value": 42}, {"color": "#93d952", "from": "Harry Potter", "to": "Vernon Dudley", "value": 21}, {"color": "#93d952", "from": "Harry Potter", "to": "Snowy", "value": 16}, {"color": "#93d952", "from": "Snowy", "to": "Tufty", "value": 6}, {"color": "#93d952", "from": "Tufty", "to": "Vernon Dursley", "value": 5}, {"color": "#93d952", "from": "Vernon Dudley", "to": "Yvonne", "value": 5}, {"color": "#93d952", "from": "Dudley Dursley", "to": "Yvonne", "value": 5}, {"color": "#93d952", "from": "Dudley Dursley", "to": "Piers Polkiss", "value": 39}, {"color": "#93d952", "from": "Harry Potter", "to": "Piers Polkiss", "value": 5}, {"color": "#93d952", "from": "Dennis Bishop", "to": "Dudley Dursley", "value": 5}, {"color": "#93d952", "from": "Dennis", "to": "Dennis Bishop", "value": 6}, {"color": "#93d952", "from": "Dennis", "to": "Dennis Creevey", "value": 6}, {"color": "#93d952", "from": "Dennis Creevey", "to": "Dennis Moon", "value": 6}, {"color": "#93d952", "from": "Dennis Moon", "to": "Malcolm", "value": 6}, {"color": "#93d952", "from": "Malcolm", "to": "Malcolm Baddock", "value": 6}, {"color": "#93d952", "from": "Malcolm Baddock", "to": "Malcolm McGonagall", "value": 6}, {"color": "#93d952", "from": "Gordon", "to": "Malcolm McGonagall", "value": 6}, {"color": "#93d952", "from": "Dudley Dursley", "to": "Gordon", "value": 6}, {"color": "#93d952", "from": "Dudley Dursley", "to": "Smeltings school nurse", "value": 12}, {"color": "#93d952", "from": "Harry Potter", "to": "Smeltings school nurse", "value": 16}, {"color": "#93d952", "from": "Harry Potter", "to": "Vernon Dursley", "value": 31}, {"color": "#93d952", "from": "Petunia Dursley", "to": "Vernon Dudley", "value": 10}, {"color": "#93d952", "from": "Harry Potter", "to": "Uncle Bilius", "value": 6}, {"color": "#93d952", "from": "Uncle Bilius", "to": "Uncle Nobby", "value": 6}, {"color": "#93d952", "from": "Harry Potter", "to": "Uncle Nobby", "value": 5}, {"color": "#93d952", "from": "Harry Potter", "to": "Rubeus Hagrid", "value": 20}, {"color": "#93d952", "from": "Harry Potter", "to": "Hogwarts governors", "value": 31}, {"color": "#93d952", "from": "Hogwarts governors", "to": "Hogwarts house-elves", "value": 66}, {"color": "#93d952", "from": "Harry Potter", "to": "Hogwarts house-elves", "value": 41}, {"color": "#93d952", "from": "Harry Potter", "to": "Minerva McGonagall", "value": 11}, {"color": "#93d952", "from": "Harry Potter", "to": "Lily Moon", "value": 5}, {"color": "#93d952", "from": "Lily Luna Potter", "to": "Lily Moon", "value": 12}, {"color": "#93d952", "from": "Lily Luna Potter", "to": "Lily Potter", "value": 12}, {"color": "#93d952", "from": "Lily Moon", "to": "Lily Potter", "value": 6}, {"color": "#93d952", "from": "Harry Potter", "to": "Lily Potter", "value": 5}, {"color": "#93d952", "from": "Dudley Dursley", "to": "Hogwarts house-elves", "value": 5}, {"color": "#93d952", "from": "Cornelius Fudge", "to": "Hogwarts house-elves", "value": 6}, {"color": "#93d952", "from": "Cornelius Fudge", "to": "Harry Potter", "value": 5}, {"color": "#93d952", "from": "Adalbert Waffling", "to": "Harry Potter", "value": 11}, {"color": "#93d952", "from": "Harry Potter", "to": "Tom Marvolo Riddle", "value": 5}, {"color": "#93d952", "from": "Tom", "to": "Tom Marvolo Riddle", "value": 6}, {"color": "#93d952", "from": "Tom", "to": "Tom ", "value": 6}, {"color": "#93d952", "from": "Tom ", "to": "Tom Riddle Sr.", "value": 6}, {"color": "#93d952", "from": "Harry Potter", "to": "Tom Riddle Sr.", "value": 6}, {"color": "#93d952", "from": "Doris Crockford", "to": "Harry Potter", "value": 21}, {"color": "#93d952", "from": "Griphook", "to": "Harry Potter", "value": 40}, {"color": "#93d952", "from": "Harry Potter", "to": "Madam Malkin", "value": 12}, {"color": "#93d952", "from": "Harry Potter", "to": "Muggle Prime Minister", "value": 5}, {"color": "#93d952", "from": "Muggle Prime Minister", "to": "Muggle tramp", "value": 6}, {"color": "#93d952", "from": "Harry Potter", "to": "Muggle tramp", "value": 5}, {"color": "#93d952", "from": "Harry Potter", "to": "Hedwig", "value": 52}, {"color": "#93d952", "from": "Dudley Dursley", "to": "Hogwarts governors", "value": 5}, {"color": "#93d952", "from": "Hedwig", "to": "Smeltings school nurse", "value": 5}, {"color": "#93d952", "from": "Hedwig", "to": "Hogwarts governors", "value": 5}, {"color": "#93d952", "from": "Ginny Weasley", "to": "Harry Potter", "value": 35}, {"color": "#93d952", "from": "Ginny Weasley", "to": "Percy Weasley", "value": 5}, {"color": "#93d952", "from": "Harry Potter", "to": "Percy Weasley", "value": 134}, {"color": "#93d952", "from": "Harry Potter", "to": "Ron Weasley", "value": 1532}, {"color": "#93d952", "from": "Harry Potter", "to": "Neville Longbottom", "value": 460}, {"color": "#93d952", "from": "Harry Potter", "to": "Lee Jordan", "value": 41}, {"color": "#93d952", "from": "Hedwig", "to": "Lee Jordan", "value": 5}, {"color": "#93d952", "from": "Ginny Weasley", "to": "Ron Weasley", "value": 11}, {"color": "#93d952", "from": "Fred Weasley", "to": "Harry Potter", "value": 53}, {"color": "#93d952", "from": "Fred Weasley", "to": "Fred Weasley ", "value": 60}, {"color": "#93d952", "from": "Fred Weasley ", "to": "George Weasley", "value": 30}, {"color": "#93d952", "from": "George Weasley", "to": "Ron Weasley", "value": 16}, {"color": "#93d952", "from": "George Weasley", "to": "Harry Potter", "value": 72}, {"color": "#93d952", "from": "Bill Weasley", "to": "Ron Weasley", "value": 5}, {"color": "#93d952", "from": "Bill Weasley", "to": "Charlie Baverstock", "value": 12}, {"color": "#93d952", "from": "Charlie Baverstock", "to": "Charlie Weasley", "value": 96}, {"color": "#93d952", "from": "Bill Weasley", "to": "Charlie Weasley", "value": 6}, {"color": "#93d952", "from": "Bill Weasley", "to": "Percy Weasley", "value": 5}, {"color": "#93d952", "from": "Fred Weasley", "to": "Percy Weasley", "value": 10}, {"color": "#93d952", "from": "Bill Weasley", "to": "Harry Potter", "value": 15}, {"color": "#93d952", "from": "Charlie Weasley", "to": "Percy Weasley", "value": 5}, {"color": "#93d952", "from": "Dudley Dursley", "to": "Ron Weasley", "value": 5}, {"color": "#93d952", "from": "Dark Lord", "to": "Harry Potter", "value": 20}, {"color": "#93d952", "from": "Dark Lord", "to": "Nicolas Flamel", "value": 6}, {"color": "#93d952", "from": "Nicolas Flamel", "to": "Ron Weasley", "value": 15}, {"color": "#93d952", "from": "Harry Potter", "to": "Hengist of Upper Barnton", "value": 5}, {"color": "#93d952", "from": "Hengist of Upper Barnton", "to": "Hengist of Woodcroft", "value": 6}, {"color": "#93d952", "from": "Alberic Grunnion", "to": "Hengist of Woodcroft", "value": 6}, {"color": "#93d952", "from": "Alberic Grunnion", "to": "Circe", "value": 6}, {"color": "#93d952", "from": "Circe", "to": "Paracelsus", "value": 6}, {"color": "#93d952", "from": "Merlin", "to": "Paracelsus", "value": 6}, {"color": "#93d952", "from": "Cliodna", "to": "Merlin", "value": 5}, {"color": "#93d952", "from": "Cliodna", "to": "Harry Potter", "value": 5}, {"color": "#93d952", "from": "Hogwarts governors", "to": "Ron Weasley", "value": 5}, {"color": "#93d952", "from": "Harry Potter", "to": "Hermione Granger", "value": 184}, {"color": "#93d952", "from": "Hermione Granger", "to": "Neville Longbottom", "value": 31}, {"color": "#93d952", "from": "Neville Longbottom", "to": "Ron Weasley", "value": 146}, {"color": "#93d952", "from": "Dark Lord", "to": "Ron Weasley", "value": 5}, {"color": "#93d952", "from": "Goyle Sr.", "to": "Harry Potter", "value": 51}, {"color": "#93d952", "from": "Draco Malfoy", "to": "Harry Potter", "value": 52}, {"color": "#93d952", "from": "Draco Malfoy", "to": "Ron Weasley", "value": 5}, {"color": "#93d952", "from": "Goyle Sr.", "to": "Ron Weasley", "value": 16}, {"color": "#93d952", "from": "Harry Potter", "to": "Sorting Hat", "value": 5}, {"color": "#93d952", "from": "Neville Longbottom", "to": "Sorting Hat", "value": 5}, {"color": "#93d952", "from": "Hermione Granger", "to": "Ron Weasley", "value": 105}, {"color": "#93d952", "from": "Hannah Abbott", "to": "Harry Potter", "value": 10}, {"color": "#93d952", "from": "Hannah Abbott", "to": "Hannah Cockleford", "value": 12}, {"color": "#93d952", "from": "Hannah Cockleford", "to": "Harry Potter", "value": 6}, {"color": "#93d952", "from": "Hannah Cockleford", "to": "Susan Blancheflower", "value": 5}, {"color": "#93d952", "from": "Susan Blancheflower", "to": "Susan Bones", "value": 18}, {"color": "#93d952", "from": "Harry Potter", "to": "Susan Bones", "value": 5}, {"color": "#93d952", "from": "Harry Potter", "to": "Justin Finch-Fletchley", "value": 11}, {"color": "#93d952", "from": "Harry Potter", "to": "Seamus Finnigan", "value": 84}, {"color": "#93d952", "from": "Percy Weasley", "to": "Ron Weasley", "value": 22}, {"color": "#93d952", "from": "Harry Potter", "to": "Nicholas Malfoy", "value": 10}, {"color": "#93d952", "from": "Neville Longbottom", "to": "Seamus Finnigan", "value": 44}, {"color": "#93d952", "from": "Great Auntie Enid", "to": "Neville Longbottom", "value": 5}, {"color": "#93d952", "from": "Great Auntie Enid", "to": "Harry Potter", "value": 5}, {"color": "#93d952", "from": "Madam Hooch", "to": "Percy Weasley", "value": 5}, {"color": "#93d952", "from": "Harry Potter", "to": "Madam Hooch", "value": 15}, {"color": "#93d952", "from": "Harry Potter", "to": "Peeves", "value": 71}, {"color": "#93d952", "from": "Peeves", "to": "Percy Weasley", "value": 11}, {"color": "#93d952", "from": "Neville Longbottom", "to": "Percy Weasley", "value": 10}, {"color": "#93d952", "from": "Neville Longbottom", "to": "Peeves", "value": 10}, {"color": "#93d952", "from": "Emeric the Evil", "to": "Harry Potter", "value": 5}, {"color": "#93d952", "from": "Emeric Switch", "to": "Emeric the Evil", "value": 6}, {"color": "#93d952", "from": "Emeric Switch", "to": "Uric the Oddball", "value": 6}, {"color": "#93d952", "from": "Harry Potter", "to": "Uric the Oddball", "value": 5}, {"color": "#93d952", "from": "Hedwig", "to": "Ron Weasley", "value": 21}, {"color": "#93d952", "from": "Goyle Sr.", "to": "Hermione Granger", "value": 5}, {"color": "#93d952", "from": "Fang", "to": "Ron Weasley", "value": 15}, {"color": "#93d952", "from": "Fang", "to": "Harry Potter", "value": 31}, {"color": "#93d952", "from": "Charlie Baverstock", "to": "Harry Potter", "value": 25}, {"color": "#93d952", "from": "Charlie Weasley", "to": "Ron Weasley", "value": 30}, {"color": "#93d952", "from": "Charlie Baverstock", "to": "Ron Weasley", "value": 37}, {"color": "#93d952", "from": "Charlie Weasley", "to": "Harry Potter", "value": 46}, {"color": "#93d952", "from": "Draco Malfoy", "to": "Dudley Dursley", "value": 6}, {"color": "#93d952", "from": "Ron Weasley", "to": "Seamus Finnigan", "value": 10}, {"color": "#93d952", "from": "Draco Malfoy", "to": "Neville Longbottom", "value": 15}, {"color": "#93d952", "from": "George Weasley", "to": "Madam Hooch", "value": 5}, {"color": "#93d952", "from": "Madam Hooch", "to": "Neville Longbottom", "value": 15}, {"color": "#93d952", "from": "Harry Potter", "to": "Parvati Patil", "value": 25}, {"color": "#93d952", "from": "Harry Potter", "to": "Oliver Wood", "value": 22}, {"color": "#93d952", "from": "Charlie Weasley", "to": "Oliver Wood", "value": 5}, {"color": "#93d952", "from": "Fred Weasley", "to": "George Weasley", "value": 16}, {"color": "#93d952", "from": "Charlie Baverstock", "to": "Fred Weasley ", "value": 5}, {"color": "#93d952", "from": "Charlie Weasley", "to": "Lee Jordan", "value": 5}, {"color": "#93d952", "from": "Dean Thomas", "to": "Harry Potter", "value": 31}, {"color": "#93d952", "from": "Dean Thomas", "to": "Seamus Finnigan", "value": 12}, {"color": "#93d952", "from": "Peeves", "to": "Ron Weasley", "value": 10}, {"color": "#93d952", "from": "Neville Longbottom", "to": "Oliver Wood", "value": 5}, {"color": "#93d952", "from": "Oliver Wood", "to": "Ron Weasley", "value": 5}, {"color": "#93d952", "from": "Parvati Patil", "to": "Ron Weasley", "value": 6}, {"color": "#93d952", "from": "George Weasley", "to": "Oliver Rivers", "value": 5}, {"color": "#93d952", "from": "Oliver Rivers", "to": "Oliver Wood", "value": 6}, {"color": "#93d952", "from": "Harry Potter", "to": "Marcus Flint", "value": 21}, {"color": "#93d952", "from": "Angelina Johnson", "to": "Marcus Flint", "value": 5}, {"color": "#93d952", "from": "Angelina Johnson", "to": "Lee Jordan", "value": 5}, {"color": "#93d952", "from": "Alicia Spinnet", "to": "Lee Jordan", "value": 5}, {"color": "#93d952", "from": "Alicia Spinnet", "to": "Harry Potter", "value": 6}, {"color": "#93d952", "from": "Harry Potter", "to": "Katie Bell", "value": 5}, {"color": "#93d952", "from": "George Weasley", "to": "Katie Bell", "value": 5}, {"color": "#93d952", "from": "Angelina Johnson", "to": "George Weasley", "value": 5}, {"color": "#93d952", "from": "Angelina Johnson", "to": "Ron Weasley", "value": 5}, {"color": "#93d952", "from": "Angelina Johnson", "to": "Harry Potter", "value": 11}, {"color": "#93d952", "from": "Lee Jordan", "to": "Marcus Flint", "value": 5}, {"color": "#93d952", "from": "Adrian Pucey", "to": "Lee Jordan", "value": 5}, {"color": "#93d952", "from": "Adrian Pucey", "to": "Harry Potter", "value": 5}, {"color": "#93d952", "from": "Dean Thomas", "to": "Ron Weasley", "value": 11}, {"color": "#93d952", "from": "Fluffy", "to": "Ron Weasley", "value": 40}, {"color": "#93d952", "from": "Fluffy", "to": "Harry Potter", "value": 105}, {"color": "#93d952", "from": "Greek chappie", "to": "Harry Potter", "value": 11}, {"color": "#93d952", "from": "Harry Potter", "to": "Nicolas Flamel", "value": 72}, {"color": "#93d952", "from": "Hermione Granger", "to": "Nicolas Flamel", "value": 6}, {"color": "#93d952", "from": "Fred Weasley ", "to": "Harry Potter", "value": 17}, {"color": "#93d952", "from": "Fred Weasley ", "to": "Percy Weasley", "value": 5}, {"color": "#93d952", "from": "George Weasley", "to": "Percy Weasley", "value": 5}, {"color": "#93d952", "from": "Fred Weasley", "to": "Ron Weasley", "value": 10}, {"color": "#93d952", "from": "Crabbe Sr.", "to": "Neville Longbottom", "value": 6}, {"color": "#93d952", "from": "Crabbe Sr.", "to": "Goyle Sr.", "value": 6}, {"color": "#93d952", "from": "Harry Potter", "to": "Severus Snape", "value": 10}, {"color": "#93d952", "from": "Fred Weasley", "to": "Neville Longbottom", "value": 5}, {"color": "#93d952", "from": "Charlie Weasley", "to": "Fang", "value": 5}, {"color": "#93d952", "from": "Charlie Baverstock", "to": "Fang", "value": 5}, {"color": "#93d952", "from": "Fluffy", "to": "Hermione Granger", "value": 6}, {"color": "#93d952", "from": "Fang", "to": "Neville Longbottom", "value": 17}, {"color": "#93d952", "from": "Hermione Granger", "to": "Ronan", "value": 5}, {"color": "#93d952", "from": "Harry Potter", "to": "Ronan", "value": 33}, {"color": "#93d952", "from": "Bane", "to": "Ronan", "value": 18}, {"color": "#93d952", "from": "Bane", "to": "Hermione Granger", "value": 5}, {"color": "#93d952", "from": "Firenze", "to": "Harry Potter", "value": 73}, {"color": "#93d952", "from": "Bane", "to": "Firenze", "value": 26}, {"color": "#93d952", "from": "Bane", "to": "Harry Potter", "value": 20}, {"color": "#93d952", "from": "Bane", "to": "Ron Weasley", "value": 5}, {"color": "#93d952", "from": "Elfric the Eager", "to": "Harry Potter", "value": 5}, {"color": "#93d952", "from": "Elfric the Eager", "to": "Ron Weasley", "value": 5}, {"color": "#93d952", "from": "Lee Jordan", "to": "Ron Weasley", "value": 10}, {"color": "#93d952", "from": "Fluffy", "to": "Neville Longbottom", "value": 15}, {"color": "#93d952", "from": "Fluffy", "to": "Hogwarts governors", "value": 5}, {"color": "#93d952", "from": "Fluffy", "to": "Hogwarts house-elves", "value": 5}, {"color": "#93d952", "from": "Firenze", "to": "Fluffy", "value": 5}, {"color": "#93d952", "from": "Neville Longbottom", "to": "Trevor", "value": 22}, {"color": "#93d952", "from": "Fluffy", "to": "Hedwig", "value": 6}, {"color": "#93d952", "from": "Nicolas Flamel", "to": "Perenelle Flamel", "value": 6}, {"color": "#93d952", "from": "Harry Potter", "to": "Perenelle Flamel", "value": 6}, {"color": "#93d952", "from": "Draco Malfoy", "to": "Hogwarts governors", "value": 5}, {"color": "#93d952", "from": "Goyle Sr.", "to": "Neville Longbottom", "value": 5}]);
+
+        // adding nodes and edges to the graph
+        data = {nodes: nodes, edges: edges};
+
+        var options = {
+    "configure": {
+        "enabled": false
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": true,
+            "type": "dynamic"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "barnesHut": {
+            "avoidOverlap": 0,
+            "centralGravity": 0.3,
+            "damping": 0.09,
+            "gravitationalConstant": -80000,
+            "springConstant": 0.001,
+            "springLength": 250
+        },
+        "enabled": true,
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+        
+        
+
+        
+
+        network = new vis.Network(container, data, options);
+	 
+        
+
+
+        
+        network.on("stabilizationProgress", function(params) {
+      		document.getElementById('loadingBar').removeAttribute("style");
+	        var maxWidth = 496;
+	        var minWidth = 20;
+	        var widthFactor = params.iterations/params.total;
+	        var width = Math.max(minWidth,maxWidth * widthFactor);
+
+	        document.getElementById('bar').style.width = width + 'px';
+	        document.getElementById('text').innerHTML = Math.round(widthFactor*100) + '%';
+	    });
+	    network.once("stabilizationIterationsDone", function() {
+	        document.getElementById('text').innerHTML = '100%';
+	        document.getElementById('bar').style.width = '496px';
+	        document.getElementById('loadingBar').style.opacity = 0;
+	        // really clean the dom element
+	        setTimeout(function () {document.getElementById('loadingBar').style.display = 'none';}, 500);
+	    });
+        
+
+        return network;
+
+    }
+
+    drawGraph();
+
+</script>
+</body>
+</html>
