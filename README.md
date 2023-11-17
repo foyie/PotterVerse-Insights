@@ -12,6 +12,7 @@
 * Then networkx library is used to visualize the network of relations betweeen the characters
 
 The netwrok visualizations: 
+
 https://github.com/foyie/harry_potter_character_network/assets/89987028/1a274cea-54be-456a-b720-f4b51daaee11
 
-https://github.com/foyie/harry_potter_character_network/assets/89987028/93466241-288f-42ab-87f5-2cc364dbd7eb
+
