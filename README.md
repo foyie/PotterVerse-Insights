@@ -1,4 +1,4 @@
-# harry potter character network
+# PotterVerse Insights: Character Relationships and Network Visualization 
 
 ## Network analysis between the harry potter characters using NLP
 
